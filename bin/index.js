@@ -12,11 +12,15 @@ const source = __dirname + '/../lib';
 const dest = process.cwd();
 
 var konyVEFolder = '/Applications/KonyVisualizerEnterprise8.2.0';
-var androidHome = '/Users/kayrules/Library/Android/sdk';
+var androidHome = process.env.ANDROID_HOME;
+var cleanFlag = '-clean';
+
+var args = process.argv.slice(2);
+if(args[0] != cleanFlag) {
+    cleanFlag = '';
+}
 
 function prepare(done) {
-    console.log('1. Prepare required plugins and environment.');
-
     rl.question('Please enter KonyVisualizerEnterprise8.2.0 path:[' + konyVEFolder + '] ', function(folder1) {
         if(folder1 != '') {
             if(!fs.existsSync(folder1)) {
@@ -27,8 +31,8 @@ function prepare(done) {
         }
         rl.question('Please enter ANDROID_HOME path:[' + androidHome + '] ', function(folder2) {
             if(folder2 != '') {
-                if(!fs.existsSync(folder1)) {
-                    console.log('-- path `' + folder1 + '` not exist. process terminated!');
+                if(!fs.existsSync(folder2)) {
+                    console.log('-- path `' + folder2 + '` not exist. process terminated!');
                     process.exit(0);
                 }
                 androidHome = folder2;
@@ -131,7 +135,7 @@ function updateProperties(done) {
 function buildAPK(done) {
     console.log('4. building apk.');
     shell.exec('npm install');
-    shell.exec('node build.js');
+    shell.exec('node build.js ' + cleanFlag);
     // shell.exec('node build.js -clean');
 
     done();
